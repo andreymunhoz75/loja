@@ -13,4 +13,18 @@ Class ProdutoController{
     public function index(){
         return $this->produto->lerTodos();
     }
+    public function pesquisarProduto($tipo, $valor){
+        return $this->produto->pesquisarProduto($tipo, $valor);
+    }
+    public function CadastrarProduto($dados){
+        $this->produto->nomeProduto = $dados["nome"];
+        $this->produto->precoProduto = $dados["preco"];
+        $this->produto->descricaoProduto = $dados["descricao"];
+        $this->produto->quantidadeProduto = $dados["quantidade"];
+
+        if($this->produto->cadastrarProduto()){
+            header("location:index.php");
+            exit();
+        }
+    }
 }

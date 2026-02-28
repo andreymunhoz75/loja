@@ -4,6 +4,13 @@ include_once "objetos/ProdutoController.php";
 $controller = new ProdutoController();
 $produtos = $controller->index();
 global $produtos;
+$a = null;
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if(isset($_POST["pesquisar"])){
+        $a = $controller->pesquisarProduto($_POST["tipo"], $_POST["pesquisar"]);
+    }
+}
 
 ?>
 
@@ -23,6 +30,33 @@ global $produtos;
 <body>
 
 <h1>Loja do LUFE</h1>
+<a href="CadastroProdutos.php">Cadastrar produto</a>
+<h3>Pesquisar Produto</h3>
+<form method="POST" action="index.php">
+    <label>Pesquise:</label>
+    <input type="text" name="pesquisar">
+    <select name="tipo">
+        <option value="id">ID</option>
+        <option value="nome">Nome</option>
+    </select>
+    <button>Pesquisar</button>
+</form>
+<table>
+    <tr>
+        <td>ID</td>
+        <td>Nome</td>
+        <td>Preço</td>
+    </tr>
+    <?php if($a):?>
+    <?php foreach($a as $produto):?>
+        <tr>
+            <td><?= $produto->id_produto; ?></td>
+            <td><?= $produto->nome; ?></td>
+            <td><?= $produto->preco; ?></td>
+        </tr>
+    <?php endforeach;?>
+    <?php endif;?>
+</table>
 <h2>Produtos cadastrados</h2>
 
 <table>
@@ -45,7 +79,6 @@ global $produtos;
         <?php endforeach; ?>
     <?php endif;?>
 </table>
-
 
 </body>
 </html>
