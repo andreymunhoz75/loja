@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if($a):?>
     <?php foreach($a as $produto):?>
         <tr>
-            <td><?= $produto->id_produto; ?></td>
+            <td><?= $produto->id; ?></td>
             <td><?= $produto->nome; ?></td>
             <td><?= $produto->preco; ?></td>
         </tr>
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if($produtos) : ?>
         <?php foreach($produtos as $produto) : ?>
             <tr>
-                <td><?php echo $produto->id_produto; ?></td>
+                <td><?php echo $produto->id; ?></td>
                 <td><?php echo $produto->nome; ?></td>
                 <td><?php echo $produto->descricao; ?></td>
                 <td><?php echo $produto->quantidade; ?></td>

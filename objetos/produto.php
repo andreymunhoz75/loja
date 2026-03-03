@@ -1,7 +1,7 @@
 <?php
 include_once("index.php");
 Class Produto{
-    public $idProduto;
+    public $id;
     public $nomeProduto;
     public $precoProduto;
     public $descricaoProduto;
@@ -22,7 +22,7 @@ Class Produto{
     }
     public function pesquisarProduto($tipo, $valor) {
         if ($tipo == 'id') {
-            $sql = "SELECT * FROM produtos WHERE id_produto = :busca";
+            $sql = "SELECT * FROM produtos WHERE id = :busca";
         } else if ($tipo == 'nome') {
             $sql = "SELECT * FROM produtos WHERE nome LIKE :busca";
             $valor = "%$valor%";
