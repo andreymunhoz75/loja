@@ -12,6 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if($_SERVER['REQUEST_METHOD'] == 'GET'){
+    if(isset($_GET["excluir"])){
+        $a = $controller->excluirProduto($_GET["excluir"]);
+    }
+}
+
 ?>
 
 <!doctype html>
@@ -23,13 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         table,tr,td{
             border: 1px solid black;
-            /*border-collapse: collapse;*/
+            border-collapse: collapse;
         }
     </style>
 </head>
 <body>
 
-<h1>Loja do LUFE</h1>
+<h1>Loja do Loordinhuuu</h1>
 <a href="CadastroProdutos.php">Cadastrar produto</a>
 <h3>Pesquisar Produto</h3>
 <form method="POST" action="index.php">
@@ -52,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <tr>
             <td><?= $produto->id; ?></td>
             <td><?= $produto->nome; ?></td>
+            <td><?= $produto->descricao; ?></td>
+            <td><?= $produto->quantidade; ?></td>
             <td><?= $produto->preco; ?></td>
         </tr>
     <?php endforeach;?>
@@ -75,9 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td><?php echo $produto->descricao; ?></td>
                 <td><?php echo $produto->quantidade; ?></td>
                 <td><?php echo $produto->preco; ?></td>
+                <td><a href="atualizar.php?alterar=<?= $produto->id?>">Alterar</a> </td>
+                <td><a href="index.php?excluir=<?= $produto->id?>">Excluir</a> </td>
             </tr>
         <?php endforeach; ?>
-    <?php endif;?>
+        <?php endif;?>
 </table>
 
 </body>

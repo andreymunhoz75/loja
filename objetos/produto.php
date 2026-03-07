@@ -1,5 +1,4 @@
 <?php
-include_once("index.php");
 Class Produto{
     public $id;
     public $nomeProduto;
@@ -45,7 +44,48 @@ Class Produto{
         $stmt->bindParam(":quantidade", $this->quantidadeProduto, PDO::PARAM_INT);
         $stmt->bindParam(":preco", $this->precoProduto);
 
-        return $stmt->execute();
+        if($stmt->execute()){
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    public function excluirProduto(){
+        $sql = "DELETE FROM produtos WHERE id = :id";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
+        if($stmt->execute()){
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    public function atualizarProduto(){
+        $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco WHERE id = :id";
+        $stmt = $this->bd->prepare($sql);
+        $stmt->bindParam(":nome", $this->idProduto, PDO::PARAM_STR);
+        $stmt->bindParam(":nome", $this->nomeProduto, PDO::PARAM_STR);
+        $stmt->bindParam(":descricao", $this->descricaoProduto, PDO::PARAM_STR);
+        $stmt->bindParam(":preco", $this->precoProduto);
+        $stmt->bindParam(":id", $this->id);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+        public function busca($id){
+            $sql = "SELECT * FROM produtos WHERE id = :id";
+            $resultado = $this->bd->prepare($sql);
+            $resultado->bindParam(":id", $id);
+            $resultado->execute();
+            return $resultado->fetch(PDO::FETCH_OBJ);
+        }
 
 }
