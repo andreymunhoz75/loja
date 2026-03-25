@@ -27,7 +27,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["alterar"])){
 <a href="index.php">Voltar</a>
 
 <form action="atualizar.php" method="post">
-    <input type="text" name="produto[id]" value="<?= $a->id ?>" hidden>
+    <input type="text" name="produto[id_produto]" value="<?= $a->id_produto ?>" hidden>
     <label>Nome</label>
     <input type="text" name="produto[nome]" value="<?= $a->nome ?>"><br><br>
     <label>descricao</label>

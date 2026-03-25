@@ -56,7 +56,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     <?php if($a):?>
     <?php foreach($a as $produto):?>
         <tr>
-            <td><?= $produto->id; ?></td>
+            <td><?= $produto->id_produto; ?></td>
             <td><?= $produto->nome; ?></td>
             <td><?= $produto->descricao; ?></td>
             <td><?= $produto->quantidade; ?></td>
@@ -74,17 +74,21 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         <td>Descrição</td>
         <td>Quantidade</td>
         <td>Preço</td>
+        <td>Imagem</td>
     </tr>
     <?php if($produtos) : ?>
         <?php foreach($produtos as $produto) : ?>
             <tr>
-                <td><?php echo $produto->id; ?></td>
+                <td><a href="ver-aluno.php?id_produto=<?= $produto->id_produto; ?>"><?= $produto->id_produto; ?></a></td>
+                <td><?php echo $produto->id_produto; ?></td>
                 <td><?php echo $produto->nome; ?></td>
                 <td><?php echo $produto->descricao; ?></td>
                 <td><?php echo $produto->quantidade; ?></td>
                 <td><?php echo $produto->preco; ?></td>
-                <td><a href="atualizar.php?alterar=<?= $produto->id?>">Alterar</a> </td>
-                <td><a href="index.php?excluir=<?= $produto->id?>">Excluir</a> </td>
+
+                <td><a href="atualizar.php?alterar=<?= $produto->id_produto?>">Alterar</a> </td>
+                <td><a href="index.php?excluir=<?= $produto->id_produto?>">Excluir</a> </td>
+                <td><a href="ver-produto.php?id_produto=<?= $produto->id_produto?>">Visualizar</a> </td>
             </tr>
         <?php endforeach; ?>
         <?php endif;?>
