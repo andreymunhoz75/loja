@@ -19,17 +19,26 @@ Class ProdutoController{
         return $this->produto->pesquisarProduto($tipo, $valor);
     }
     public function CadastrarProduto($dados, $arquivo){
-        $temArquivo = isset($arquivo["name"]["fileToUpload"])
-            && $arquivo["name"]["fileToUpload"] !== ""
-            && isset($arquivo["erro"]["fileToUpload"])
-            && $arquivo["erro"]["fileToUpload"] === UPLOAD_ERR_OK;
 
-         if($temArquivo && !$this->upload($arquivo)){
+//        $temArquivo = isset($arquivo["name"]["fileToUpload"])
+//            && $arquivo["name"]["fileToUpload"] !== ""
+//            && isset($arquivo["erro"]["fileToUpload"])
+//            && $arquivo["erro"]["fileToUpload"] === UPLOAD_ERR_OK;
+//
+//
+//         if($temArquivo && !$this->upload($arquivo)){
+//             return false;
+//         }
+
+
+         if(!$this->upload($arquivo)){
              return false;
-         }
-         if(!$temArquivo){
              $this->img_name = null;
          }
+
+//         if(!$temArquivo){
+//             $this->img_name = null;
+//         }
 
         $this->produto->nomeProduto = $dados["nome"];
         $this->produto->precoProduto = $dados["preco"];
@@ -50,16 +59,24 @@ Class ProdutoController{
         }
     }
 
-    public function AtualizarProduto($dados){
+    public function AtualizarProduto($dados, $arquivo){
+
+        if(!$this->upload($arquivo)){
+            return false;
+            $this->img_name = null;
+        }
+
         $this->produto->id_produto = $dados["id_produto"];
         $this->produto->nomeProduto = $dados["nome"];
         $this->produto->precoProduto = $dados["preco"];
         $this->produto->descricaoProduto = $dados["descricao"];
         $this->produto->quantidadeProduto = $dados["quantidade"];
+        $this->produto->imagem = $this->img_name;
 
         if($this->produto->atualizarProduto()){
             header("location:index.php");
         }
+
     }
 
     public function localizarProduto($id_produto){
@@ -96,7 +113,8 @@ Class ProdutoController{
 
         // Verifica o tamanho do arquivo - Limite de 5MB
         if ($arquivo['size']['fileToUpload'] > 5000000) {
-            // echo "Arquivo muito grande!<br>";
+            //echo "Arquivo muito grande!<br>";
+
             $uploadOk = 0;
         }
         // Permite apenas determinados tipos de arquivo - jpg, png, jpeg e gif
@@ -104,21 +122,25 @@ Class ProdutoController{
             $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
             && $imageFileType != "gif"
         ) {
-            //  echo "São aceitas somente imagens JPG, JPEG, PNG e GIF.";
+            //echo "São aceitas somente imagens JPG, JPEG, PNG e GIF.";
+
             $uploadOk = 0;
         }
 
         // Verificação de erros. Se $uploadOk=0 ocorreu algum erro
         if ($uploadOk == 0) {
-            //  echo "Erro: não foi possível fazer upload.";
+          //  echo "Erro: não foi possível fazer upload.";
+
             return false;
             // Se não ocorreu problemas, tenta fazer upload
         } else {
             if (move_uploaded_file($arquivo['tmp_name']['fileToUpload'], $upload_file)) {
-                //     echo "Arquivo ". basename( $arquivo['full_path']['fileToUpload']) . " enviado.";
+//              echo "Arquivo ". basename( $arquivo['full_path']['fileToUpload']) . " enviado.";
+//              die();
                 return true;
             } else {
-                //     echo "Erro ao enviar a imagem.";
+//               echo "Erro ao enviar a imagem.";
+//               die();
                 return false;
             }
         }

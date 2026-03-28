@@ -79,12 +79,17 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     <?php if($produtos) : ?>
         <?php foreach($produtos as $produto) : ?>
             <tr>
-                <td><a href="ver-aluno.php?id_produto=<?= $produto->id_produto; ?>"><?= $produto->id_produto; ?></a></td>
-                <td><?php echo $produto->id_produto; ?></td>
+                <td><a href="ver-produto.php?id_produto=<?= $produto->id_produto; ?>"></a><?php echo $produto->id_produto; ?></td>
                 <td><?php echo $produto->nome; ?></td>
                 <td><?php echo $produto->descricao; ?></td>
                 <td><?php echo $produto->quantidade; ?></td>
                 <td><?php echo $produto->preco; ?></td>
+
+                <?php if($produto->imagem == "") : ?>
+                    <td><img style="width: 20%;" src="imagens/Image-not-found.png"></td>
+                <?php else : ?>
+                    <td><img style="width: 20%;" src="uploads/<?= $produto->imagem; ?>"</td>
+                <?php endif; ?>
 
                 <td><a href="atualizar.php?alterar=<?= $produto->id_produto?>">Alterar</a> </td>
                 <td><a href="index.php?excluir=<?= $produto->id_produto?>">Excluir</a> </td>

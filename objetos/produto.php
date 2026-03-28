@@ -36,6 +36,7 @@ Class Produto{
     }
 
     public function cadastrarProduto(){
+
         $sql = "INSERT INTO produtos (nome, descricao, quantidade, preco, imagem) VALUES (:nome, :descricao, :quantidade, :preco, :imagens)";
         $stmt = $this->bd->prepare($sql);
 
@@ -67,13 +68,13 @@ Class Produto{
     }
 
     public function atualizarProduto(){
-        $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco WHERE id_produto = :id_produto";
+        $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco , imagem = :imagem WHERE id_produto = :id_produto";
         $stmt = $this->bd->prepare($sql);
-        $stmt->bindParam(":nome", $this->id_produto, PDO::PARAM_STR);
         $stmt->bindParam(":nome", $this->nomeProduto, PDO::PARAM_STR);
         $stmt->bindParam(":descricao", $this->descricaoProduto, PDO::PARAM_STR);
         $stmt->bindParam(":preco", $this->precoProduto);
         $stmt->bindParam(":id_produto", $this->id_produto);
+        $stmt->bindParam(":imagem", $this->imagem, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
             return true;
