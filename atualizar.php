@@ -1,4 +1,8 @@
 <?php
+include_once "objetos/FuncionarioController.php";
+$funcController = new FuncionarioController();
+$funcController->verificarAutenticacao();
+
 include_once("objetos/ProdutoController.php");
 
 $controller = new ProdutoController();
@@ -21,6 +25,7 @@ if($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["alterar"])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cadastro de Prdouto</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <h1>Atualização de Produto</h1>

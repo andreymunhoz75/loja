@@ -1,4 +1,8 @@
 <?php
+include_once "objetos/FuncionarioController.php";
+$funcController = new FuncionarioController();
+$funcController->verificarAutenticacao();
+
 include_once "objetos/ProdutoController.php";
 
 $controller = new ProdutoController();
@@ -26,17 +30,16 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Loja</title>
-    <style>
-        table,tr,td{
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>Loja do Loordinhuuu</h1>
-<a href="CadastroProdutos.php">Cadastrar produto</a>
+<a href="CadastroProdutos.php">Cadastrar produto</a> 
+<?php if (isset($_SESSION["funcionario_nivel"]) && $_SESSION["funcionario_nivel"] === 'admin'): ?>
+    | <a href="painel_funcionario.php">Painel de Funcionários</a> 
+<?php endif; ?>
+| <a href="logout.php">Sair</a>
 <h3>Pesquisar Produto</h3>
 <form method="POST" action="index.php">
     <label>Pesquise:</label>
