@@ -28,7 +28,9 @@ body {
     margin: 0 auto;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     color: #f8fafc;
     margin-bottom: 20px;
     font-weight: 700;
@@ -55,7 +57,7 @@ a:hover {
 }
 
 /* Nav/Toolbar links at the top level usually follow h1 */
-body > a {
+body>a {
     display: inline-block;
     background-color: var(--surface-color);
     padding: 8px 16px;
@@ -65,13 +67,17 @@ body > a {
     margin-right: 10px;
 }
 
-body > a:hover {
+body>a:hover {
     background-color: var(--border-color);
     color: #fff;
 }
 
 /* Button & Link styles acting as buttons */
-button, input[type="submit"], button[name="cadastrar"], button[name="atualizar"], button[name="pesquisar"] {
+button,
+input[type="submit"],
+button[name="cadastrar"],
+button[name="atualizar"],
+button[name="pesquisar"] {
     background-color: var(--accent-color);
     color: #ffffff;
     border: none;
@@ -84,12 +90,14 @@ button, input[type="submit"], button[name="cadastrar"], button[name="atualizar"]
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-button:hover, input[type="submit"]:hover {
+button:hover,
+input[type="submit"]:hover {
     background-color: var(--accent-hover);
     box-shadow: 0 0 15px var(--accent-color);
 }
 
-button:active, input[type="submit"]:active {
+button:active,
+input[type="submit"]:active {
     transform: scale(0.98);
 }
 
@@ -105,7 +113,8 @@ table {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
-th, td {
+th,
+td {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);

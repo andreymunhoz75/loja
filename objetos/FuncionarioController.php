@@ -138,6 +138,13 @@ Class FuncionarioController{
         }
     }
 
+    public function verificarFuncionario() {
+        $this->verificarAutenticacao();
+        if ($_SESSION["funcionario_nivel"] === 'cliente') {
+            die("Acesso negado. Clientes não podem gerenciar produtos.");
+        }
+    }
+
     public function upload($arquivo)
     {
         if (!isset($arquivo["name"]['fileToUpload']) || $arquivo["error"]['fileToUpload'] != UPLOAD_ERR_OK) {

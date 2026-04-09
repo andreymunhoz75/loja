@@ -1,54 +1,86 @@
 <?php
 include_once "objetos/FuncionarioController.php";
 
-$controller = new FuncionarioController();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cadastrar'])) {
-    $controller->RegistrarExterno($_POST['funcionario'], $_FILES['funcionario']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["btn_registrar"])) {
+    $controller = new FuncionarioController();
+    // Passando os dois argumentos necessários (dados do form e array de arquivos)
+    $controller->RegistrarExterno($_POST["funcionario"], $_FILES["funcionario"]);
 }
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registrar Conta</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Minimalist Store | Cadastro</title>
+    <link rel="stylesheet" href="minimalist_store.css?v=<?= time(); ?>">
+    <style>
+        body {
+            background-color: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Criar Nova Conta no Sistema</h1>
-    <a href="login.php">Voltar para o Login</a><br><br>
-    
-    <form action="registrar.php" method="POST" enctype="multipart/form-data">
-        <label>Nome:</label><br>
-        <input type="text" name="funcionario[nome_fun]" required><br><br>
 
-        <label>CPF:</label><br>
-        <input type="text" name="funcionario[cpf]" maxlength="14" required><br><br>
+<div class="form-card" style="width: 100%; max-width: 500px; padding: 40px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+        <div class="logo" style="margin-bottom: 24px; font-size: 1.5rem;">MINIMALIST.</div>
+        <p style="color: var(--gray-600); font-size: 14px;">Crie sua conta para acessar nossa curadoria exclusiva.</p>
+    </div>
 
-        <label>Endereço:</label><br>
-        <input type="text" name="funcionario[endereco]" required><br><br>
+    <form method="post" action="registrar.php" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" name="funcionario[nome_fun]" placeholder="Como te chamamos?" required autofocus>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label>CPF</label>
+                <input type="text" name="funcionario[cpf]" placeholder="000.000.000-00" required>
+            </div>
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="funcionario[telefone]" placeholder="(00) 00000-0000" required>
+            </div>
+        </div>
 
-        <label>Telefone:</label><br>
-        <input type="text" name="funcionario[telefone]" required><br><br>
-        
-        <label>Login:</label><br>
-        <input type="text" name="funcionario[login_fun]" required><br><br>
-        
-        <label>Senha:</label><br>
-        <input type="password" name="funcionario[senha_fun]" required><br><br>
-        
-        <label>Função (Para fins de teste):</label><br>
-        <select name="funcionario[funcao]">
-            <option value="funcionario">Funcionário</option>
-            <option value="admin">Administrador</option>
-        </select><br><br>
+        <div class="form-group">
+            <label>Endereço</label>
+            <input type="text" name="funcionario[endereco]" placeholder="Sua localização..." required>
+        </div>
 
-        <label for="fileToUpload">Selecionar Foto (Opcional):</label><br>
-        <input type="file" name="funcionario[fileToUpload]" id="fileToUpload"><br><br>
+        <input type="hidden" name="funcionario[funcao]" value="cliente">
         
-        <button type="submit" name="cadastrar">Registrar Conta e Acessar</button>
+        <div class="form-group">
+            <label>Defina seu Login</label>
+            <input type="text" name="funcionario[login_fun]" placeholder="Nome de usuário..." required>
+        </div>
+        
+        <div class="form-group">
+            <label>Sua Senha</label>
+            <input type="password" name="funcionario[senha_fun]" placeholder="Escolha uma senha forte..." required>
+        </div>
+
+        <div class="form-group" style="border-top: 1px solid var(--gray-100); padding-top: 20px;">
+            <label>Foto de Perfil (Opcional)</label>
+            <input type="file" name="funcionario[fileToUpload]">
+        </div>
+
+        <button name="btn_registrar" class="btn-buy" style="margin-top: 10px; padding: 14px; width: 100%;">CRIAR CONTA</button>
+        
+        <div style="text-align: center; margin-top: 32px; font-size: 13px;">
+            <p style="color: var(--gray-600); margin-bottom: 8px;">Já tem uma conta?</p>
+            <a href="login.php" style="font-weight: 700; text-decoration: underline;">FAZER LOGIN</a>
+        </div>
     </form>
+</div>
+
 </body>
 </html>

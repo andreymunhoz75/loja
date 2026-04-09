@@ -21,7 +21,7 @@ Class Produto{
     }
     public function pesquisarProduto($tipo, $valor) {
         if ($tipo == 'id') {
-            $sql = "SELECT * FROM produtos WHERE id = :busca";
+            $sql = "SELECT * FROM produtos WHERE id_produto = :busca";
         } else if ($tipo == 'nome') {
             $sql = "SELECT * FROM produtos WHERE nome LIKE :busca";
             $valor = "%$valor%";
@@ -68,13 +68,22 @@ Class Produto{
     }
 
     public function atualizarProduto(){
-        $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco , imagem = :imagem WHERE id_produto = :id_produto";
+        if ($this->imagem) {
+            $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco, quantidade = :quantidade, imagem = :imagem WHERE id_produto = :id_produto";
+        } else {
+            $sql = "UPDATE produtos SET nome = :nome, descricao = :descricao, preco = :preco, quantidade = :quantidade WHERE id_produto = :id_produto";
+        }
+
         $stmt = $this->bd->prepare($sql);
         $stmt->bindParam(":nome", $this->nomeProduto, PDO::PARAM_STR);
         $stmt->bindParam(":descricao", $this->descricaoProduto, PDO::PARAM_STR);
         $stmt->bindParam(":preco", $this->precoProduto);
+        $stmt->bindParam(":quantidade", $this->quantidadeProduto, PDO::PARAM_INT);
         $stmt->bindParam(":id_produto", $this->id_produto);
-        $stmt->bindParam(":imagem", $this->imagem, PDO::PARAM_STR);
+
+        if ($this->imagem) {
+            $stmt->bindParam(":imagem", $this->imagem, PDO::PARAM_STR);
+        }
 
         if ($stmt->execute()) {
             return true;

@@ -1,83 +1,96 @@
 <?php
 include_once "objetos/FuncionarioController.php";
-
 $controller = new FuncionarioController();
 $controller->verificarAdmin();
 
 $funcionarios = $controller->index();
-$eh_admin = (isset($_SESSION['funcionario_nivel']) && $_SESSION['funcionario_nivel'] === 'admin');
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['excluir']) && $eh_admin) {
-    $controller->ExcluirFuncionario($_GET['excluir']);
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["excluir"])) {
+    $controller->ExcluirFuncionario($_GET["excluir"]);
+    header("Location: painel_funcionario.php");
+    exit();
 }
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Painel de Gerenciamento de Funcionários</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Minimalist Store | Gestão de Pessoas</title>
+    <link rel="stylesheet" href="minimalist_store.css?v=<?= time(); ?>">
 </head>
 <body>
-    <h1>Painel de Gerenciamento de Funcionários</h1>
-    <p>Bem-vindo, <?= htmlspecialchars($_SESSION['funcionario_nome'] ?? '') ?> (Função: <?= htmlspecialchars($_SESSION['funcionario_nivel'] ?? '') ?>)</p>
-    
-    <a href="index.php">Ir para a Loja</a> | 
-    <a href="logout.php">Sair</a>
-    <br><br>
 
-    <?php if ($eh_admin): ?>
-        <a href="cadastro_funcionario.php">Cadastrar Novo Funcionário</a><br><br>
-    <?php endif; ?>
+<header class="main-header">
+    <div class="logo">MINIMALIST.</div>
+    <div class="header-actions">
+        <a href="index.php" class="btn-text">CATÁLOGO</a>
+        <a href="logout.php" class="btn-primary-small">SAIR</a>
+    </div>
+</header>
 
-    <h2>Lista de Funcionários</h2>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Imagem</th>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>Endereço</th>
-            <th>Telefone</th>
-            <th>Função</th>
-            <th>Login</th>
-            <?php if ($eh_admin): ?>
-                <th>Ações</th>
-            <?php endif; ?>
-        </tr>
-        <?php if ($funcionarios): ?>
-            <?php foreach ($funcionarios as $func): ?>
+<main class="container">
+    <div class="section-header" style="margin-bottom: 48px;">
+        <h1 class="page-title">Gestão de Pessoas</h1>
+        <a href="cadastro_funcionario.php" class="btn-buy" style="width: auto; padding: 12px 24px; font-size: 13px;">➕ NOVO FUNCIONÁRIO</a>
+    </div>
+
+    <div class="table-container">
+        <table class="minimal-table">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($func->id) ?></td>
-                    <td>
-                        <?php if(empty($func->imagem_fun)) : ?>
-                            <img style="width: 50px; height: 50px; object-fit: cover;" src="imagens/Image-not-found.png">
-                        <?php else : ?>
-                            <img style="width: 50px; height: 50px; object-fit: cover;" src="uploads/<?= htmlspecialchars($func->imagem_fun); ?>">
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($func->nome_fun) ?></td>
-                    <td><?= htmlspecialchars($func->cpf) ?></td>
-                    <td><?= htmlspecialchars($func->endereco) ?></td>
-                    <td><?= htmlspecialchars($func->telefone) ?></td>
-                    <td><?= htmlspecialchars($func->funcao) ?></td>
-                    <td><?= htmlspecialchars($func->login_fun) ?></td>
-                    <?php if ($eh_admin): ?>
-                        <td>
-                            <a href="atualizar_funcionario.php?id=<?= $func->id ?>">Alterar</a>
-                            | 
-                            <a href="painel_funcionario.php?excluir=<?= $func->id ?>" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
-                        </td>
-                    <?php endif; ?>
+                    <th>Identificação</th>
+                    <th>Nome Completo</th>
+                    <th>CPF</th>
+                    <th>Função / Nível</th>
+                    <th>Ações Disponíveis</th>
                 </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="9">Nenhum funcionário encontrado.</td>
-            </tr>
-        <?php endif; ?>
-    </table>
+            </thead>
+            <tbody>
+                <?php if($funcionarios): ?>
+                    <?php foreach($funcionarios as $func): ?>
+                        <tr>
+                            <td style="color: var(--gray-600); font-size: 11px;">#00<?= $func->id; ?></td>
+                            <td style="font-weight: 500; font-size: 14px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <?php if(!empty($func->imagem_fun)): ?>
+                                        <img src="uploads/<?= $func->imagem_fun; ?>" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                    <?php endif; ?>
+                                    <?= $func->nome_fun; ?>
+                                </div>
+                            </td>
+                            <td style="color: var(--gray-600);"><?= $func->cpf; ?></td>
+                            <td>
+                                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; background: #EEE; color: <?= $func->funcao == 'admin' ? '#ef4444' : 'var(--gray-600)'; ?>;">
+                                    <?= $func->funcao; ?>
+                                </span>
+                            </td>
+                            <td style="display: flex; gap: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;">
+                                <a href="atualizar_funcionario.php?alterar=<?= $func->id; ?>" style="color: var(--gray-900);">Editar</a>
+                                <a href="painel_funcionario.php?excluir=<?= $func->id; ?>" style="color: #ef4444;" onclick="return confirm('Deseja excluir?')">Excluir</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 60px; color: var(--gray-600);">Sem registros ativos no sistema.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 48px;">
+        <a href="index.php" class="btn-outline">Voltar ao Catálogo de Produtos</a>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <div class="copyright">
+        &copy; 2026 Minimalist Store.
+    </div>
+</footer>
+
 </body>
 </html>

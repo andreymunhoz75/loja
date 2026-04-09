@@ -1,27 +1,32 @@
 <?php
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include_once "objetos/FuncionarioController.php";
-$funcController = new FuncionarioController();
-$funcController->verificarAutenticacao();
-
 include_once "objetos/ProdutoController.php";
 
 $controller = new ProdutoController();
 $produtos = $controller->index();
-global $produtos;
+
 $a = null;
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if(isset($_POST["pesquisar"])){
-        $a = $controller->pesquisarProduto($_POST["tipo"], $_POST["pesquisar"]);
-    }
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["pesquisar"])) {
+    $a = $controller->pesquisarProduto($_POST["tipo"], $_POST["pesquisar"]);
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if(isset($_GET["excluir"])){
-        $a = $controller->excluirProduto($_GET["excluir"]);
+// Verifica se é administrador ou funcionário (comum).
+// Se for "cliente", is_employee é falso e não tem acesso às ferramentas de edição.
+$is_employee = isset($_SESSION["funcionario_logado"]) && ($_SESSION["funcionario_nivel"] === 'admin' || $_SESSION["funcionario_nivel"] === 'comum');
+$is_admin = isset($_SESSION["funcionario_logado"]) && $_SESSION["funcionario_nivel"] === 'admin';
+
+if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET["excluir"])){
+    if($is_employee) {
+        $controller->excluirProduto($_GET["excluir"]);
     }
+    header("Location: index.php");
+    exit();
 }
 
+$carrinho_count = isset($_SESSION['carrinho']) ? count($_SESSION['carrinho']) : 0;
 ?>
 
 <!doctype html>
@@ -29,78 +34,116 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Loja</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Minimalist Store | Catálogo</title>
+    <link rel="stylesheet" href="minimalist_store.css?v=<?= time(); ?>">
 </head>
 <body>
 
-<h1>Loja do Loordinhuuu</h1>
-<a href="CadastroProdutos.php">Cadastrar produto</a> 
-<?php if (isset($_SESSION["funcionario_nivel"]) && $_SESSION["funcionario_nivel"] === 'admin'): ?>
-    | <a href="painel_funcionario.php">Painel de Funcionários</a> 
-<?php endif; ?>
-| <a href="logout.php">Sair</a>
-<h3>Pesquisar Produto</h3>
-<form method="POST" action="index.php">
-    <label>Pesquise:</label>
-    <input type="text" name="pesquisar">
-    <select name="tipo">
-        <option value="id">ID</option>
-        <option value="nome">Nome</option>
-    </select>
-    <button>Pesquisar</button>
-</form>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Nome</td>
-        <td>Preço</td>
-    </tr>
-    <?php if($a):?>
-    <?php foreach($a as $produto):?>
-        <tr>
-            <td><?= $produto->id_produto; ?></td>
-            <td><?= $produto->nome; ?></td>
-            <td><?= $produto->descricao; ?></td>
-            <td><?= $produto->quantidade; ?></td>
-            <td><?= $produto->preco; ?></td>
-        </tr>
-    <?php endforeach;?>
-    <?php endif;?>
-</table>
-<h2>Produtos cadastrados</h2>
+<header class="main-header">
+    <div class="logo">MINIMALIST.</div>
+    
+    <div class="search-container">
+        <form method="POST" action="index.php" style="display: flex; width: 100%;">
+            <input type="text" name="pesquisar" class="search-input" placeholder="O que você está procurando?">
+            <input type="hidden" name="tipo" value="nome">
+        </form>
+    </div>
+    
+    <div class="header-actions">
+        <a href="carrinho.php" class="btn-text">CARRINHO (<?= $carrinho_count; ?>)</a>
+        
+        <?php if ($is_employee): ?>
+            <?php if ($is_admin): ?>
+                <a href="painel_funcionario.php" class="btn-text">PAINEL GESTÃO</a>
+            <?php endif; ?>
+            <a href="CadastroProdutos.php" class="btn-text">NOVO PRODUTO</a>
+        <?php endif; ?>
 
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Nome</td>
-        <td>Descrição</td>
-        <td>Quantidade</td>
-        <td>Preço</td>
-        <td>Imagem</td>
-    </tr>
-    <?php if($produtos) : ?>
-        <?php foreach($produtos as $produto) : ?>
-            <tr>
-                <td><a href="ver-produto.php?id_produto=<?= $produto->id_produto; ?>"></a><?php echo $produto->id_produto; ?></td>
-                <td><?php echo $produto->nome; ?></td>
-                <td><?php echo $produto->descricao; ?></td>
-                <td><?php echo $produto->quantidade; ?></td>
-                <td><?php echo $produto->preco; ?></td>
+        <?php if (isset($_SESSION["funcionario_logado"]) && $_SESSION["funcionario_logado"] === true): ?>
+            <a href="logout.php" class="btn-primary-small">SAIR</a>
+        <?php else: ?>
+            <a href="login.php" class="btn-primary-small">ENTRAR</a>
+        <?php endif; ?>
+    </div>
+</header>
 
-                <?php if($produto->imagem == "") : ?>
-                    <td><img style="width: 20%;" src="imagens/Image-not-found.png"></td>
-                <?php else : ?>
-                    <td><img style="width: 20%;" src="uploads/<?= $produto->imagem; ?>"</td>
-                <?php endif; ?>
+<main class="container">
+    <?php if($a !== null): ?>
+        <header class="section-header">
+            <h1 class="page-title">Resultados da Busca</h1>
+            <a href="index.php" class="btn-outline">Limpar Filtros</a>
+        </header>
 
-                <td><a href="atualizar.php?alterar=<?= $produto->id_produto?>">Alterar</a> </td>
-                <td><a href="index.php?excluir=<?= $produto->id_produto?>">Excluir</a> </td>
-                <td><a href="ver-produto.php?id_produto=<?= $produto->id_produto?>">Visualizar</a> </td>
-            </tr>
-        <?php endforeach; ?>
+        <div class="product-grid">
+            <?php if(count($a) > 0): ?>
+                <?php foreach($a as $produto): ?>
+                    <article class="product-card">
+                        <div class="image-wrapper">
+                            <a href="ver-produto.php?id_produto=<?= $produto->id_produto; ?>" style="display: contents;">
+                                <?php if(empty($produto->imagem)): ?>
+                                    <img src="imagens/Image-not-found.png" alt="Não encontrado">
+                                <?php else: ?>
+                                    <img src="uploads/<?= $produto->imagem; ?>" alt="<?= $produto->nome; ?>">
+                                <?php endif; ?>
+                            </a>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name"><?= $produto->nome; ?></div>
+                            <div class="product-price">R$ <?= number_format($produto->preco, 2, ',', '.'); ?></div>
+                        </div>
+                        <a href="carrinho_acoes.php?acao=add&id=<?= $produto->id_produto; ?>" class="buy-button" style="text-decoration: none;">COMPRAR AGORA</a>
+                    </article>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p style="grid-column: span 4; text-align: center; color: var(--gray-600); padding: 80px 0;">Nenhum item encontrado.</p>
+            <?php endif; ?>
+        </div>
+        <div style="margin-top: 80px; border-top: 1px solid var(--gray-100); padding-top: 80px;"></div>
+    <?php endif; ?>
+
+    <header class="section-header">
+        <h1 class="page-title">Nosso Catálogo</h1>
+        <p style="color: var(--gray-600);">O essencial para o seu espaço.</p>
+    </header>
+
+    <div class="product-grid">
+        <?php if($produtos) : ?>
+            <?php foreach($produtos as $produto) : ?>
+                <article class="product-card">
+                    <div class="image-wrapper">
+                        <a href="ver-produto.php?id_produto=<?= $produto->id_produto; ?>" style="display: contents;">
+                            <?php if(empty($produto->imagem)) : ?>
+                                <img src="imagens/Image-not-found.png" alt="Sem imagem">
+                            <?php else : ?>
+                                <img src="uploads/<?= $produto->imagem; ?>" alt="<?= $produto->nome; ?>">
+                            <?php endif; ?>
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name"><?= $produto->nome; ?></div>
+                        <div class="product-price">R$ <?= number_format($produto->preco, 2, ',', '.'); ?></div>
+                        
+                        <?php if($is_employee): ?>
+                            <div style="margin-top: 10px; display: flex; gap: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <a href="atualizar.php?alterar=<?= $produto->id_produto?>" style="color: var(--gray-600);">Editar</a>
+                                <a href="index.php?excluir=<?= $produto->id_produto?>" style="color: #ef4444;" onclick="return confirm('Deseja excluir?')">Excluir</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <a href="carrinho_acoes.php?acao=add&id=<?= $produto->id_produto; ?>" class="buy-button" style="text-decoration: none;">COMPRAR AGORA</a>
+                </article>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p style="grid-column: span 4; text-align: center; color: var(--gray-600); padding: 80px 0;">Aguardando novos envios.</p>
         <?php endif;?>
-</table>
+    </div>
+</main>
+
+<footer class="main-footer">
+    <div class="copyright">
+        &copy; 2026 Minimalist Store. Pureza em cada detalhe.
+    </div>
+</footer>
 
 </body>
 </html>

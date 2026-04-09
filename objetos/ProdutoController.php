@@ -33,7 +33,6 @@ Class ProdutoController{
 
          if(!$this->upload($arquivo)){
              return false;
-             $this->img_name = null;
          }
 
 //         if(!$temArquivo){
@@ -56,15 +55,15 @@ Class ProdutoController{
 
         if($this->produto->excluirProduto()){
             header("location:index.php");
+            exit();
         }
     }
 
     public function AtualizarProduto($dados, $arquivo){
 
-        if(!$this->upload($arquivo)){
-            return false;
-            $this->img_name = null;
-        }
+         if(!$this->upload($arquivo)){
+             return false;
+         }
 
         $this->produto->id_produto = $dados["id_produto"];
         $this->produto->nomeProduto = $dados["nome"];
@@ -75,6 +74,7 @@ Class ProdutoController{
 
         if($this->produto->atualizarProduto()){
             header("location:index.php");
+            exit();
         }
 
     }
@@ -85,6 +85,14 @@ Class ProdutoController{
 
     public function upload($arquivo)
     {
+        if (!isset($arquivo['name']['fileToUpload']) || $arquivo['error']['fileToUpload'] === UPLOAD_ERR_NO_FILE) {
+            $this->img_name = null;
+            return true;
+        }
+
+        if ($arquivo['error']['fileToUpload'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
 
         $target_dir = "uploads/";
         $uploadOk = 1;
